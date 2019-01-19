@@ -7,11 +7,37 @@ import * as Adapter from 'enzyme-adapter-react-16';
 enzyme.configure({ adapter: new Adapter() });
 
 describe('AddTodoForm', () => {
-    test('inputが描画される', () => {
-        const onDummy = jest.fn();
-        const addTodoForm = enzyme.shallow(<AddTodoForm addTodo={onDummy} />);
+    const addTodoSpy = jest.fn();
+    let wrapper: enzyme.ShallowWrapper;
 
-        expect(addTodoForm.find('button').text()).toEqual('Todoを追加');
+    beforeEach(() => {
+        wrapper = enzyme.shallow(<AddTodoForm addTodo={addTodoSpy} />);
+    });
+
+    describe('Todoを追加ボタン', () => {
+        test('ボタンが存在する', () => {
+            expect(wrapper.find('.todo-submit').length).toBe(1);
+        });
+
+        test('ボタンテキストが「Todoを追加」', () => {
+            expect(wrapper.find('button').text()).toEqual('Todoを追加');
+        });
+
+        test('inputに文字列入力後にボタンを押すとaddTodoが発火する', () => {
+            const mountWrapper = enzyme.mount(
+                <AddTodoForm addTodo={addTodoSpy} />
+            );
+            const inputValue = 'jestとenzymeでテストを書く';
+
+            mountWrapper.setState({ input: inputValue });
+
+            // ボタンを押す
+            mountWrapper.find('form').simulate('submit');
+
+            // addTodoが発火する
+            expect(addTodoSpy).toHaveBeenCalledTimes(1);
+            expect(addTodoSpy).toHaveBeenCalledWith(inputValue);
+        });
     });
 
     test('inputに描画した文字列が描画される', () => {
