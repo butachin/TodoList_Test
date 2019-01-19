@@ -47,6 +47,26 @@ describe('Todo', () => {
         }
     });
 
+    test('テキストをクリックするとhandleToggleが発火する', () => {
+        const handleDeleteSpy = jest.fn();
+        const handleToggleSpy = jest.fn();
+
+        const wrapper = enzyme.shallow(
+            <Todo
+                completed={true}
+                text='Todo item1'
+                handleDelete={handleDeleteSpy}
+                handleToggle={handleToggleSpy}
+            />
+        );
+
+        // テキストをクリック
+        wrapper.find('label').simulate('click');
+
+        // handleDeleteが発火する
+        expect(handleToggleSpy).toHaveBeenCalled();
+    });
+
     test('削除ボタンが描画される', () => {
         const onDummy = jest.fn();
         const todoItem = enzyme.shallow(
@@ -62,5 +82,25 @@ describe('Todo', () => {
         expect(todoItem.find('li > button').text()).toEqual('削除');
         // 描画されている
         expect(todoItem.find('li > button').length).toBe(1);
+    });
+
+    test('削除ボタンをクリックするとhandleDeleteが発火する', () => {
+        const handleDeleteSpy = jest.fn();
+        const handleToggleSpy = jest.fn();
+
+        const wrapper = enzyme.shallow(
+            <Todo
+                completed={true}
+                text='Todo item1'
+                handleDelete={handleDeleteSpy}
+                handleToggle={handleToggleSpy}
+            />
+        );
+
+        // 削除ボタンを押す
+        wrapper.find('button').simulate('click');
+
+        // handleDeleteが発火する
+        expect(handleDeleteSpy).toHaveBeenCalled();
     });
 });
